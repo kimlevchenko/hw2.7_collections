@@ -6,20 +6,18 @@ import pro.sky.java.group.hwcollections.exceptions.EmployeeNotFoundException;
 import pro.sky.java.group.hwcollections.exceptions.EmployeeStorageIsFullException;
 import pro.sky.java.group.hwcollections.model.Employee;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
     private static final int SIZE = 10;
 
-    private final List<Employee> employeeList;
+    private final Map<String, Employee> employeeList;
 
     public EmployeeServiceImpl() {
-        this.employeeList = new ArrayList<>();
+
+        this.employeeList = new HashMap<>();
     }
 
     @Override
@@ -28,18 +26,18 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new EmployeeStorageIsFullException();
         }
         Employee employee = new Employee(firstName, lastName);
-        if (employeeList.contains(employee)) {
+        if (employeeList.containsKey(employee.getFullName())) {
             throw new EmployeeAlreadyAddedException();
         }
-        employeeList.add(employee);
+        employeeList.put(employee.getFullName(), employee);
         return employee;
     }
 
     @Override
     public Employee find(String firstName, String lastName) {
         Employee employee = new Employee(firstName, lastName);
-        if (employeeList.contains(employee)) {
-            return employee;
+        if (employeeList.containsKey(employee.getFullName())) {
+            return employeeList.get(employee.getFullName());
         }
         throw new EmployeeNotFoundException();
     }
@@ -47,14 +45,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public Employee remove(String firstName, String lastName) {
         Employee employee = new Employee(firstName, lastName);
-        if (employeeList.contains(employee)) {
-            employeeList.remove(employee);
-            return employee;
+        if (employeeList.containsKey(employee.getFullName())) {
+            return employeeList.remove(employee);
+
         }
         throw new EmployeeNotFoundException();
     }
 
     public Collection<Employee> getAll() {
-        return Collections.unmodifiableList(employeeList);
+        return Collections.unmodifiableCollection(employeeList.values());
     }
 }
