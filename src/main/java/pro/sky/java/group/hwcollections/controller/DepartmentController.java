@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.sky.java.group.hwcollections.model.Employee;
-import pro.sky.java.group.hwcollections.service.DepartmentService;
+import pro.sky.java.group.hwcollections.service.DepartmentServiceImpl;
 
 import java.util.Collection;
 import java.util.List;
@@ -15,29 +15,30 @@ import java.util.List;
 
 public class DepartmentController {
 
-    private final DepartmentService service;
+    private final DepartmentServiceImpl service;
 
-    public DepartmentController(DepartmentService service) {
+    public DepartmentController(DepartmentServiceImpl service) {
         this.service = service;
     }
 
     @GetMapping("/max-salary")
-    public double max(@RequestParam int departmentId) {
+    public Employee max(@RequestParam int departmentId) {
         return service.maxSalary(departmentId);
     }
 
     @GetMapping("/min-salary")
-    public double min(@RequestParam int departmentId) {
+    public Employee min(@RequestParam int departmentId) {
         return service.minSalary(departmentId);
     }
 
-    @GetMapping("/all")
+
+    @GetMapping(path = "/all", params = {"departmentId"})
     public List<Employee> findAll(@RequestParam int departmentId) {
         return service.findAllByDept(departmentId);
     }
 
     @GetMapping("/all")
-    public Collection<Employee> findAllByDept(@RequestParam int departmentId) {
-        return (Collection<Employee>) service.groupByDept(departmentId);
+    public Collection<Employee> findAllByDept() {
+        return (Collection<Employee>) service.groupByDept();
     }
 }
